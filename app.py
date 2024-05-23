@@ -7,20 +7,27 @@ import pandas as pd
 import io
 from datetime import datetime
 
+# Создаем объект приложения Flask
 app = Flask(__name__)
+# Загружаем конфигурацию приложения
 app.config.from_object('config.Config')
 
+# Инициализируем базу данных с приложением
 db.init_app(app)
+# Настраиваем миграции базы данных
 migrate = Migrate(app, db)
 
+# Инициализируем менеджер входа в систему
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+# Загрузка пользователя по его идентификатору
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# Обработка маршрута /login для входа пользователей
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -36,6 +43,7 @@ def login():
             flash('Неправильный логин или пароль', 'danger')
     return render_template('login.html', form=form)
 
+# Обработка маршрута /register для регистрации новых пользователей
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -51,23 +59,25 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
+# Обработка маршрута /logout для выхода из системы
 @app.route('/logout')
-@login_required
+@login_required  # Требует аутентификации пользователя
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
+# Обработка маршрута корневой страницы /
 @app.route('/')
-@login_required
+@login_required  # Требует аутентификации пользователя
 def index():
     return render_template('index.html')
 
+# Обработка маршрута /settings для изменения настроек пользователя
 @app.route('/settings', methods=['GET', 'POST'])
-@login_required
+@login_required  # Требует аутентификации пользователя
 def settings():
     form = SettingsForm()
     if form.validate_on_submit():
-        print("Форма прошла валидацию")
         if not current_user.check_password(form.old_password.data):
             flash('Текущий пароль неверный.', 'danger')
         else:
@@ -81,17 +91,13 @@ def settings():
             except Exception as e:
                 db.session.rollback()
                 flash(f'Ошибка при сохранении изменений: {str(e)}', 'danger')
-                print(f'Ошибка при сохранении изменений: {str(e)}')
-    else:
-        print("Форма не прошла валидацию")
-        print(form.errors)
-
     form.email.data = current_user.email
     form.username.data = current_user.username
     return render_template('settings.html', form=form)
 
+# Обработка маршрута /transactions для просмотра транзакций
 @app.route('/transactions')
-@login_required
+@login_required  # Требует аутентификации пользователя
 def view_transactions():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
@@ -106,8 +112,9 @@ def view_transactions():
     transactions = query.all()
     return render_template('view_transactions.html', transactions=transactions)
 
+# Обработка маршрута /transactions/add для добавления новой транзакции
 @app.route('/transactions/add', methods=['GET', 'POST'])
-@login_required
+@login_required  # Требует аутентификации пользователя
 def add_transaction():
     if request.method == 'POST':
         transaction_type = request.form['type']
@@ -131,8 +138,9 @@ def add_transaction():
 
     return render_template('add_transaction.html')
 
+# Обработка маршрута /report для создания отчетов
 @app.route('/report', methods=['GET', 'POST'])
-@login_required
+@login_required  # Требует аутентификации пользователя
 def report():
     form = ReportForm()
     if form.validate_on_submit():
@@ -175,5 +183,7 @@ def report():
 
     return render_template('report.html', form=form)
 
+# Запуск приложения Flask
 if __name__ == '__main__':
     app.run(debug=True)
+
