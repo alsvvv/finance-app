@@ -2,24 +2,25 @@ version: '3'
 
 services:
   web:
-    build: .
+    build: .  # Сборка образа для веб-приложения из текущей директории
     ports:
-      - "80:5000"
+      - "80:5000"  # Проброс порта 80 на порт 5000 внутри контейнера
     environment:
-      FLASK_ENV: development
+      FLASK_ENV: development  # Установка переменной окружения для Flask
     volumes:
-      - .:/finance_app
+      - .:/finance_app  # Примонтировать текущую директорию в контейнер
     depends_on:
-      - db
+      - db  # Указание на то, что сервис web зависит от запуска сервиса db
 
   db:
-    image: postgres:13
+    image: postgres:13  # Использование образа PostgreSQL версии 13
     environment:
-      POSTGRES_USER: alisa
-      POSTGRES_PASSWORD: WY8^SiNuSi
-      POSTGRES_DB: finance
+      POSTGRES_USER: alisa  # Установка имени пользователя для PostgreSQL
+      POSTGRES_PASSWORD: WY8^SiNuSi  # Установка пароля для PostgreSQL
+      POSTGRES_DB: finance  # Установка имени базы данных для PostgreSQL
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data  # Примонтировать том для хранения данных PostgreSQL
 
 volumes:
-  postgres_data:
+  postgres_data:  # Определение тома для хранения данных PostgreSQL
+
