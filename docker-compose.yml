@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "80:5000"
+    environment:
+      FLASK_ENV: development
+    volumes:
+      - .:/finance_app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: alisa
+      POSTGRES_PASSWORD: WY8^SiNuSi
+      POSTGRES_DB: finance
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить транзакцию{% endblock %}
+
+{% block content %}
+  <h2>Добавить транзакцию</h2>
+  <form method="POST" action="{{ url_for('add_transaction') }}">
+    <div class="form-group">
+      <label for="type">Тип</label>
+      <select class="form-control" id="type" name="type">
+        <option value="income">Доход</option>
+        <option value="expense">Расход</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="amount">Сумма</label>
+      <input type="number" class="form-control" id="amount" name="amount" required>
+    </div>
+    <div class="form-group">
+      <label for="currency">Валюта</label>
+      <select class="form-control" id="currency" name="currency" required>
+        <option value="RUB">Рубль</option>
+        <option value="EUR">Евро</option>
+        <option value="USD">Доллар</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="date">Дата</label>
+      <input type="date" class="form-control" id="date" name="date" required>
+    </div>
+    <div class="form-group">
+      <label for="category">Категория</label>
+      <input type="text" class="form-control" id="category" name="category" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Добавить</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Просмотр транзакций{% endblock %}
+
+{% block content %}
+  <h2>Ваши транзакции</h2>
+  <form method="GET" action="{{ url_for('view_transactions') }}">
+    <div class="form-row">
+      <div class="form-group col-md-3">
+        <label for="start_date">С</label>
+        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}">
+      </div>
+      <div class="form-group col-md-3">
+        <label for="end_date">По</label>
+        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}">
+      </div>
+      <div class="form-group col-md-2 align-self-end">
+        <button type="submit" class="btn btn-primary">Фильтр</button>
+      </div>
+    </div>
+  </form>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Тип</th>
+        <th>Сумма</th>
+        <th>Валюта</th>
+        <th>Дата</th>
+        <th>Категория</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in transactions %}
+        <tr>
+          <td>
+            {% if transaction.type == 'income' %}
+              Доход
+            {% elif transaction.type == 'expense' %}
+              Расход
+            {% endif %}
+          </td>
+          <td>{{ transaction.amount }}</td>
+          <td>{{ transaction.currency }}</td>
+          <td>{{ transaction.date }}</td>
+          <td>{{ transaction.category.name }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="mt-4">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Вернуться на главное меню</a>
+  </div>
+{% endblock %}
